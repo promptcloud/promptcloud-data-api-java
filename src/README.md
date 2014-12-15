@@ -30,10 +30,10 @@ To ignore invalid ssl certificate -
 * Above command will put the downloaded files in ~/promptcloud/downloads
 * Log file can be viewed at ~/promptcloud/log/*log
 * Api config file at ~/promptcloud/configs/config.yml
-* To override the downloaded file use option --download_dir "<apidir full path>"
-* To override config dir use option --apiconf "<apiconf full path>"
+* To override the downloaded file use option --download_dir <apidir full path>
+* To override config dir use option --apiconf <apiconf full path>
 
-In command line tool, if option --perform_initial_setup is provided along with other options, then initial setup will be performed (create conf file, download dir)
+In command line tool, if option --perform_initial_setup is provided along with other options, then initial setup will be performed (create conf file, download dir).
 
 ## Contributing
 In order to contribute,
