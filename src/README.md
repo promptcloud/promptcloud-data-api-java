@@ -22,9 +22,9 @@ To download data -
 
     java -jar get_promptcloud_data-<version> --user <username> --pass <password> [--timestamp <timestamp>] [--apiparam <api_param_comma_separated>]
 
-To ignore ssl certificate -
+To ignore invalid ssl certificate -
     
-    java -jar get_promptcloud_data-<version> --user <username> --pass <password> [--timestamp <timestamp>] [--apiparam <api_param_comma_separated>] --ignore_ssl_certificate 
+    java -jar get_promptcloud_data-<version> --user <username> --pass <password> --ignore_ssl_certificate [--timestamp <timestamp>] [--apiparam <api_param_comma_separated>] 
 
 
 * Above command will put the downloaded files in ~/promptcloud/downloads
