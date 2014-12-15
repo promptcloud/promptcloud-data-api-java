@@ -4,14 +4,11 @@ This is PromptCloud's (http://promptcloud.com) data API in java. It can be used 
 
 NOTE: API query  requires a valid userid and password.
 
-For queries related to this gem please contact the folks at promptcloud or open a github issue
+For queries related to this gem please contact the folks at promptcloud or open a github issue.
 
 ## Installation
-Download latest jar form -
-
-    https://github.com/promptcloud/promptcloud-data-api-java/releases
-
-And install java (version >= "1.7.0")
+* Download latest jar form https://github.com/promptcloud/promptcloud-data-api-java/releases
+* And install java (version >= "1.7.0")
 
 ## Usage
 
@@ -23,11 +20,11 @@ To get help -
 
 To download data -
 
-    java -jar get_promptcloud_data-<version> --user <username> --pass <password> [--timestamp <timestamp>] [----apiparam <api_param_comma_separated>
+    java -jar get_promptcloud_data-<version> --user <username> --pass <password> [--timestamp <timestamp>] [--apiparam <api_param_comma_separated>]
 
 To ignore ssl certificate -
     
-    java -jar get_promptcloud_data-<version> --user <username> --pass <password> [--timestamp <timestamp>] [----apiparam <api_param_comma_separated> --ignore_ssl_certificate 
+    java -jar get_promptcloud_data-<version> --user <username> --pass <password> [--timestamp <timestamp>] [--apiparam <api_param_comma_separated>] --ignore_ssl_certificate 
 
 
 * Above command will put the downloaded files in ~/promptcloud/downloads
@@ -49,7 +46,7 @@ In order to contribute,
 
 
 ## Note
-Solution of "SSLHandshakeException" due to SSLHandshakeException due to invalid SSL certificate check.  
+Solution of "SSLHandshakeException" due to invalid SSL certificate check.  
  
     Best and safe solution: 
     Follow this post http://www.java-samples.com/showtutorial.php?tutorialid=210
