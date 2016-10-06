@@ -1,75 +1,76 @@
 // net classes
 import java.net.URI;
-import javax.net.ssl.SSLHandshakeException;
 import java.net.URL;
-// security classes
-import java.security.SecureRandom;
-import java.security.cert.X509Certificate;
-// javax classes
 import javax.net.ssl.HostnameVerifier;
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLContext;
+import javax.net.ssl.SSLHandshakeException;
 import javax.net.ssl.SSLSession;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
-
 // io classes
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.File;
 import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.BufferedWriter;
-import java.io.PrintWriter;
 import java.io.DataInputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-// util classes
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Iterator;
-import java.util.Date;
-import java.util.TimeZone;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.zip.GZIPInputStream;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+// security classes
+import java.security.SecureRandom;
+import java.security.cert.X509Certificate;
 // text classes
 import java.text.SimpleDateFormat;
-// yml classes
-import org.yaml.snakeyaml.Yaml;
-// json classes
-import org.json.simple.JSONObject;
-import org.json.simple.JSONArray;
-import org.json.simple.parser.ParseException;
-import org.json.simple.parser.JSONParser;
-// http classes
-import org.apache.http.StatusLine;
-import org.apache.http.HttpHost;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.AuthCache;
-import org.apache.http.client.CredentialsProvider;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.protocol.HttpClientContext;
-import org.apache.http.impl.auth.BasicScheme;
-import org.apache.http.impl.client.BasicAuthCache;
-import org.apache.http.impl.client.BasicCredentialsProvider;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.io.FileUtils;
+// util classes
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.TimeZone;
+import java.util.zip.GZIPInputStream;
+// javax classes
+import javax.net.ssl.SSLHandshakeException;
 // cli classes
 import org.apache.commons.cli.BasicParser;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.CommandLineParser;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.FilenameUtils;
+// http classes
+import org.apache.http.StatusLine;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.UsernamePasswordCredentials;
+import org.apache.http.client.AuthCache;
+import org.apache.http.client.CredentialsProvider;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.protocol.HttpClientContext;
+import org.apache.http.impl.auth.BasicScheme;
+import org.apache.http.impl.client.BasicAuthCache;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpHost;
+// json classes
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.json.simple.JSONArray;
+// yml classes
+import org.yaml.snakeyaml.Yaml;
 
 
 
@@ -77,13 +78,15 @@ class GetPromptCloudData {
 	public static void main(String args[]) {
 		try {
 			HashMap options = (new PromptCloudApiArgParser(args)).parse();
+			if(options.get("version")!=null) {
+				System.out.println("Version: 0.1");
+				System.exit(1);
+			}
+			
 			PromptCloudDataAPI promptCloudDataAPI = new PromptCloudDataAPI(options);
 			PromptCloudDataAPITimer timer = new PromptCloudDataAPITimer();
 
-			if(options.get("version")!=null) {
-				System.out.println("Version: 0.1");
-			}
-			else if( options.get("display_info") != null ) { 
+			if( options.get("display_info") != null ) { 
 				promptCloudDataAPI.display_info(options);
 			}
 			else if( options.get("perform_initial_setup") != null ) { 
@@ -123,6 +126,8 @@ class PromptCloudDataAPI {
 	static String userhome = System.getProperty("user.home");
 	static String promptcloudhome = userhome+sysPathSep+"promptcloud";
 	static String client_id = null;
+	static String client_auth_key = null;
+	static String password = null;
 	long api_downtime = 0;
 
 	PromptCloudDataAPI(HashMap options) {	
@@ -159,7 +164,7 @@ class PromptCloudDataAPI {
 
 	boolean perform_initial_setup(HashMap options) {
 		boolean perform_initial_setup_status = false;
-		try {    
+		try {
 			if( options.get("promptcloudhome") != null ) {
 				promptcloudhome = (String)options.get("promptcloudhome");
 			}
@@ -219,12 +224,41 @@ class PromptCloudDataAPI {
 			String apiconf_file_path = (String)options.get("apiconf");
 			HashMap conf_hash = (HashMap)yaml.load(new FileReader(apiconf_file_path));
 			client_id = (String)conf_hash.get("client_id");
+			if(options.get("api_version") == "v1"){
+				password = (String)conf_hash.get("password");
+			}
+			else{
+				if(options.get("api_version") == null){
+					client_auth_key = (String)conf_hash.get("client_auth_key");
+					options.put("api_version", "v2");
+				}
+			}
+			if(client_id == null){
+				client_id = (String)options.get("user");
+			}
+			if(client_auth_key == null){
+				client_auth_key = (String)options.get("client_auth_key");
+			}
+			if(password == null){
+				password = (String)options.get("pass");
+			}
+			
 			//System.out.println("client_id: "+client_id);
 			if( client_id == null ) {
-				System.out.println("Could not find client id from config file: "+apiconf_file_path);
+				System.out.println("Could not find client id from config file and neither has been passed from command line: "+apiconf_file_path);
+				System.exit(1);
+			}
+			if(options.get("api_version") == "v2" && client_auth_key == null){
+				System.out.println("Could not find client auth key from config file and neither has been passed from command line, Please either pass the client auth key from command prompt (use -h for help) or store the same under client_auth_key: in config.yml file, as for api version 2 this field is mandatory: "+apiconf_file_path);
+				System.exit(1);
+			}
+			if(options.get("api_version") == "v1" && password == null){
+				System.out.println("Could not find password from config file and neither has been passed from command line, Please either pass the password from command prompt (use -h for help) or store the same under password: in config.yml file, as for api version 1 this field is mandatory:: "+apiconf_file_path);
 				System.exit(1);
 			}
 			options.put("user",client_id);
+			options.put("client_auth_key",client_auth_key);
+			options.put("password",password);
 			String download_dir_from_conf_hash = (String)(String)conf_hash.get("download_dir");
 			if( download_dir_from_conf_hash != null) {
 				download_dir = download_dir_from_conf_hash;
@@ -243,8 +277,11 @@ class PromptCloudDataAPI {
 	}
 
 	boolean download_files(HashMap options) throws Exception {
-		if( options.get("user") == null  ||  options.get("pass") == null ) {
+		if( options.get("api_version") == "v1" && (options.get("user") == null  ||  options.get("pass") == null )) {
 			throw new UserAndPassException("You didn't provide username or password. Please pass -h or --help for help.");
+		}
+		if( options.get("api_version") == "v2" && (options.get("user") == null  ||  options.get("client_auth_key") == null )) {
+			throw new UserAndPassException("You didn't provide username or client authentication key. Please pass -h or --help for help.");
 		}
 		boolean new_feed_exists = false;
 		Long ts = System.currentTimeMillis()*1000000;
@@ -321,12 +358,30 @@ class PromptCloudDataAPI {
 			String strUrl = (String)options.get("url_to_download");
 			URI url = new URI(strUrl);
 			String user = (String)options.get("user");
-			String pass = (String)options.get("pass");
+			String pass = null;
+			String client_auth_key = null;
+			if(options.get("api_version") == "v1"){
+				pass = (String)options.get("pass");
+			}
+			else{
+				client_auth_key = (String)options.get("client_auth_key");
+			}
 			String domain = url.getHost();
 			HttpHost target = new HttpHost(domain);
-			CredentialsProvider credsProvider = new BasicCredentialsProvider();
-			credsProvider.setCredentials(new AuthScope(target.getHostName(), target.getPort()),new UsernamePasswordCredentials(user,pass));
-			CloseableHttpClient httpclient = HttpClients.custom().setDefaultCredentialsProvider(credsProvider).build();
+			CloseableHttpClient httpclient;
+			
+			if(options.get("api_version").equals("v1")){
+				CredentialsProvider credsProvider = new BasicCredentialsProvider();
+				credsProvider.setCredentials(new AuthScope(target.getHostName(), target.getPort()),new UsernamePasswordCredentials(user,pass));
+				httpclient = HttpClients.custom().setDefaultCredentialsProvider(credsProvider).build();
+			}
+			else{
+				httpclient = HttpClients.custom().build();
+			}
+			//CredentialsProvider credsProvider = new BasicCredentialsProvider();
+			//credsProvider.setCredentials(new AuthScope(target.getHostName(), target.getPort()),new UsernamePasswordCredentials(user,pass));
+			//CloseableHttpClient httpclient = HttpClients.custom().setDefaultCredentialsProvider(credsProvider).build();
+						
 			try {
 				AuthCache authCache = new BasicAuthCache();
 				BasicScheme basicAuth = new BasicScheme();
@@ -363,11 +418,18 @@ class PromptCloudDataAPI {
 						resInputStream.close();
 						downloadFileOutSteam.close();
 						response.close();
-					} 
-					GZIPInputStream gzfis = null;        
-					try {
+					}
+					String md5sumNewDownloadFile = null;
+					GZIPInputStream gzfis = null;
+					if(FilenameUtils.getExtension(downloadFilePath).equals("gz")){        
 						gzfis = new GZIPInputStream(new FileInputStream(downloadFile));
-						String md5sumNewDownloadFile = DigestUtils.md5Hex(gzfis);
+						md5sumNewDownloadFile = DigestUtils.md5Hex(gzfis);
+						gzfis.close();
+					}
+					else{
+						md5sumNewDownloadFile = DigestUtils.md5Hex(new FileInputStream(downloadFile));
+					}
+					try {
 						if(md5sum.equals(md5sumNewDownloadFile)) {					
 							downloadFlag = true;				
 							System.out.println("Download successful URL: "+strUrl+" File_Path: "+downloadFilePath+" md5sum: "+md5sumNewDownloadFile);
@@ -380,9 +442,7 @@ class PromptCloudDataAPI {
 					}catch(Exception e) {
 						e.printStackTrace(System.out);
 						downloadFlag = false;
-					}finally {
-						gzfis.close();
-					}
+					}	
 				}
 				else {
 					System.out.println("API issue, status: "+statusLine+"\nCould not download file: "+strUrl);
@@ -414,7 +474,7 @@ class PromptCloudDataAPI {
 			ssl_ctx.init(null,                // key manager
 					trust_mgr,           // trust manager
 					new SecureRandom()); // random number generator
-			if(options.get("ignore_ssl_certificate")!=null) {
+			if(options.get("ignore_ssl_certificate") == null) {
 				HttpsURLConnection.setDefaultSSLSocketFactory(ssl_ctx.getSocketFactory());
 				//System.out.println("DEBUGING...ignore_ssl_certificate");
 			}
@@ -559,10 +619,18 @@ class PromptCloudDataAPI {
 	}
 
 	String get_api_url(HashMap options) {
-		String promptcloud_api_query = "https://api.promptcloud.com/data/info?id="+client_id;
+		String base_url = "https://api.promptcloud.com";
 		if(options.get("bcp") != null ) {
-			promptcloud_api_query = "https://api.bcp.promptcloud.com/data/info?id="+client_id;
+			base_url = "https://api.bcp.promptcloud.com";
 		}
+		String promptcloud_api_query = null;
+		if(options.get("api_version").equals("v1")){
+			promptcloud_api_query = "" + base_url + "/data/info?id=" + client_id;
+		}
+		else{
+			promptcloud_api_query = "" + base_url + "/v2/data/info?id=" + client_id + "&client_auth_key=" + client_auth_key;
+		}
+		
 		if(options.get("timestamp") != null) {
 			promptcloud_api_query = promptcloud_api_query+"&ts="+(String)options.get("timestamp");
 			try {
@@ -573,9 +641,11 @@ class PromptCloudDataAPI {
 				e.printStackTrace(System.out);
 			}
 		}
+		
 		if(options.get("category") != null) {
 			promptcloud_api_query = promptcloud_api_query+"&cat="+(String)options.get("category");
 		}
+		
 		if(options.get("apiparam") != null) {
 			String paramsStr = (String)options.get("apiparam");
 			if( paramsStr != null ) {
@@ -584,8 +654,10 @@ class PromptCloudDataAPI {
 					promptcloud_api_query = promptcloud_api_query+"&"+params[i];
 				}
 			}				
-		}			
+		}
+		
 		promptcloud_api_query = promptcloud_api_query+"&api_res_type=json";
+		
 		System.out.println("PromptCloud Data API URL: "+promptcloud_api_query);
 		return promptcloud_api_query;
 	}
@@ -630,8 +702,10 @@ class PromptCloudApiArgParser {
 		options.addOption(null,"noloop", false, "to download new data files and and exit, this is the default behaviour");
 		options.addOption("b","bcp", false, "to use api.bcp.promptcloud.com instead of api.promptcloud.com");
 		options.addOption("a","apiparam", true, "some valid data api param comma separated examle: days=1,filter=sitewiselatest");
-		options.addOption("n","ignore_ssl_certificate", false, "to ignore invalid ssl certificate");
+		options.addOption("n","ignore_ssl_certificate", true, "to ignore invalid ssl certificate, by default ssl certificate is ignored, if you want enable it then pass -n false");
 		options.addOption(null,"version", false, "to show the version");
+		options.addOption("v", "api_version", true, "to pass the api version, Default is v2");
+		options.addOption("k", "client_auth_key", true, "to pass the client authentication key if the api version is v2");
 	}
 	HashMap parse() {
 		HashMap optionsHashMap = new HashMap();
@@ -686,11 +760,17 @@ class PromptCloudApiArgParser {
 				optionsHashMap.put("apiparam",cmd.getOptionValue("apiparam"));
 			}
 			if (cmd.hasOption("ignore_ssl_certificate")) {
-				optionsHashMap.put("ignore_ssl_certificate",true);
+				optionsHashMap.put("ignore_ssl_certificate",cmd.getOptionValue("ignore_ssl_certificate"));
 			}
 			if (cmd.hasOption("version")) {
 				optionsHashMap.put("version",true);
 			}
+			if (cmd.hasOption("api_version")){
+				optionsHashMap.put("api_version", cmd.getOptionValue("api_version"));
+			}
+			if (cmd.hasOption("client_auth_key")){
+				optionsHashMap.put("client_auth_key", cmd.getOptionValue("client_auth_key"));
+			}			
 		}catch( Exception e) {
 			System.out.println("Failed to parse comand line properties"+e);
 			//e.printStackTrace(System.out);
