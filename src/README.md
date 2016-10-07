@@ -31,57 +31,56 @@ To get help -
 
 ## Usage: Main
 
-	-a,--apiparam <arg>                 	some valid data api param comma
-                                     		separated examle:
-                                     		days=1,filter=sitewiselatest
- 	-b,--bcp                            	to use api.bcp.promptcloud.com
-                                     		instead of api.promptcloud.com
- 	-c,--apiconf <arg>                  	APICONFIG FILE PATH, to override the
-                                     		config file location, APICONFIG file
-                                     		stores information like client_id,
-                                     		downloadir, previous timestamp file
- 	-d,--download_dir <arg>             	DOWNLOADDIR, to override the download
-                                     		dir obtained from apiconf file
-	--display_info				display config info
- 	-h,--help				show help.
- 	-i,--perform_initial_setup          	perform initial setup
- 	-k,--client_auth_key <arg>          	to pass the client authentication key
-                                     		if the api version is v2
- 	-l,--loop                           	to download new data files and keep
-                                     		looking for new one. i.e it doesn't
-                                     		exit, if no new feed is found it will
-                                     		sleep. minimun sleep time is 10 secs
-                                     		and max sleep time is 300 secs
- 	-n,--ignore_ssl_certificate <arg>   	to ignore invalid ssl certificate, by
-                                     		default ssl certificate is ignored,
-                                     		if you want enable it then pass -n
-                                     		false
-	--noloop				to download new data files and and
-                                     		exit, this is the default behaviour
- 	-p,--pass <arg>                     	PASSWORD, data api password
-	--promptcloudhome <arg>			PROMPTCLOUDHOME, to override the
-                                     		promptcloudhome dir: ~/promptcloud
-	--queried_timestamp_file <arg>		QUERIED TIME STAMP FILE PATH, to
-                                     		override default queried timestamp
-                                     		file, file that stores last queried
-                                     		timestamp
- 	-t,--timestamp <arg>                	Local TIMESTAMP(nano time(integer)
-                                     		i.e. 1417069800000000000 or
-                                     		String(yyyy-MM-dd-hh:mm:ss.SSS-a)
-                                     		i.e. 2014-11-29-2:04:00.000-AM), to
-                                     		get files newer than or equal to
-                                     		given timestamp
- 	-u,--user <arg>                     	USER, data api user id
- 	-v,--api_version <arg>              	to pass the api version, Default is
-                                     		v2
-	--version				to show the version
-
-	User Help:
-	To perform initial setup,please pass --perform_initial_setup and/or --user <client_id>
-	To download data,please pass --user <client_id> and --pass <password>
-	Please note that client_id will be saved in config.yml but pass will not be.
-
-
+         -a,--apiparam <arg>                 some valid data api param comma
+                                             separated examle:
+                                             days=1,filter=sitewiselatest
+         -b,--bcp                            to use api.bcp.promptcloud.com
+                                             instead of api.promptcloud.com
+         -c,--apiconf <arg>                  APICONFIG FILE PATH, to override the
+                                             config file location, APICONFIG file
+                                             stores information like client_id,
+                                             downloadir, previous timestamp file
+         -d,--download_dir <arg>             DOWNLOADDIR, to override the download
+                                             dir obtained from apiconf file
+            --display_info                   display config info
+         -h,--help                           show help.
+         -i,--perform_initial_setup          perform initial setup
+         -k,--client_auth_key <arg>          to pass the client authentication key
+                                             if the api version is v2
+         -l,--loop                           to download new data files and keep
+                                             looking for new one. i.e it doesn't
+                                             exit, if no new feed is found it will
+                                             sleep. minimun sleep time is 10 secs
+                                             and max sleep time is 300 secs
+         -n,--ignore_ssl_certificate <arg>   to ignore invalid ssl certificate, by
+                                             default ssl certificate is ignored,
+                                             if you want enable it then pass -n
+                                             false
+            --noloop                         to download new data files and and
+                                             exit, this is the default behaviour
+         -p,--pass <arg>                     PASSWORD, data api password
+            --promptcloudhome <arg>          PROMPTCLOUDHOME, to override the
+                                             promptcloudhome dir: ~/promptcloud
+            --queried_timestamp_file <arg>    QUERIED TIME STAMP FILE PATH, to
+                                             override default queried timestamp
+                                             file, file that stores last queried
+                                             timestamp
+         -t,--timestamp <arg>                Local TIMESTAMP(nano time(integer)
+                                             i.e. 1417069800000000000 or
+                                             String(yyyy-MM-dd-hh:mm:ss.SSS-a)
+                                             i.e. 2014-11-29-2:04:00.000-AM), to
+                                             get files newer than or equal to
+                                             given timestamp
+         -u,--user <arg>                     USER, data api user id
+         -v,--api_version <arg>              to pass the api version, Default is
+                                             v2
+            --version                        to show the version
+	    
+        User Help:
+        To perform initial setup,please pass --perform_initial_setup and/or --user <client_id>
+        To download data,please pass --user <client_id> and --pass <password>
+        Please note that client_id will be saved in config.yml but pass will not be.
+	
 ## To download data -
 
 	if api_version is "v2"(default) :-
