@@ -2,7 +2,7 @@
 
 This is PromptCloud's (http://promptcloud.com) data API in java. It can be used to fetch the client specific data from PromptCloud data api.
 
-NOTE: API query  requires a valid userid and password.
+NOTE: API query  requires a valid userid and password for api_version "v1" and requires userid and client authentication key for api_version "v2".
 
 For queries related to this gem please contact the folks at promptcloud or open a github issue.
 
@@ -16,15 +16,28 @@ Access using Command line:
 
 To get help -
 
-    java -jar get_promptcloud_data-<version> -h 
+    java -jar get_promptcloud_data-<api_version> -h 
 
 To download data -
 
-    java -jar get_promptcloud_data-<version> --user <username> --pass <password> [--timestamp <timestamp>] [--apiparam <api_param_comma_separated>]
+	if api_version is "v2"(default) :-
 
-To ignore invalid ssl certificate -
+    		java -jar get_promptcloud_data-<version_of_jar_file> --user <username> --client_auth_key <client_auth_key> [--timestamp <timestamp>] [--apiparam <api_param_comma_separated>]
+
+		To ignore invalid ssl certificate - 
+
+		Note :- This field is set to true by default, if you don't want to ignore ssl certificate please pass false.
     
-    java -jar get_promptcloud_data-<version> --user <username> --pass <password> --ignore_ssl_certificate [--timestamp <timestamp>] [--apiparam <api_param_comma_separated>] 
+    		java -jar get_promptcloud_data-<version_of_jar_file> --user <username> --client_auth_key <client_auth_key> --ignore_ssl_certificate [--timestamp <timestamp>] [--apiparam <api_param_comma_separated>] 
+	
+	if api_version is "v1" :-
+
+    		java -jar get_promptcloud_data-<version_of_jar_file> --user <username> --pass <password> --api_version v1 [--timestamp <timestamp>] [--apiparam <api_param_comma_separated>]
+
+		To ignore invalid ssl certificate - 
+
+    		java -jar get_promptcloud_data-<api_version> --user <username> --pass <password> --api_version v1 --ignore_ssl_certificate [--timestamp <timestamp>] [--apiparam <api_param_comma_separated>] 
+
 
 
 * Above command will put the downloaded files in ~/promptcloud/downloads
