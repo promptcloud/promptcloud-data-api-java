@@ -42,7 +42,7 @@ To get help -
                                      		downloadir, previous timestamp file
  	-d,--download_dir <arg>             	DOWNLOADDIR, to override the download
                                      		dir obtained from apiconf file
-    	   --display_info                   	display config info
+	--display_info                   	display config info
  	-h,--help                           	show help.
  	-i,--perform_initial_setup          	perform initial setup
  	-k,--client_auth_key <arg>          	to pass the client authentication key
@@ -56,12 +56,12 @@ To get help -
                                      		default ssl certificate is ignored,
                                      		if you want enable it then pass -n
                                      		false
-    	   --noloop                         	to download new data files and and
+	--noloop                         	to download new data files and and
                                      		exit, this is the default behaviour
  	-p,--pass <arg>                     	PASSWORD, data api password
-    	   --promptcloudhome <arg>          	PROMPTCLOUDHOME, to override the
+	--promptcloudhome <arg>          	PROMPTCLOUDHOME, to override the
                                      		promptcloudhome dir: ~/promptcloud
-	   --queried_timestamp_file <arg>    	QUERIED TIME STAMP FILE PATH, to
+	--queried_timestamp_file <arg>    	QUERIED TIME STAMP FILE PATH, to
                                      		override default queried timestamp
                                      		file, file that stores last queried
                                      		timestamp
@@ -74,7 +74,7 @@ To get help -
  	-u,--user <arg>                     	USER, data api user id
  	-v,--api_version <arg>              	to pass the api version, Default is
                                      		v2
-	   --version                        	to show the version
+	--version                        	to show the version
 
 	User Help:
 	To perform initial setup,please pass --perform_initial_setup and/or --user <client_id>
