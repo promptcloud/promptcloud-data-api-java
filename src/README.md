@@ -29,7 +29,8 @@ To get help -
 
     java -jar get_promptcloud_data-<version_of_jar_file> -h 
 
-usage: Main
+## Usage: Main
+
  -a,--apiparam <arg>                 some valid data api param comma
                                      separated examle:
                                      days=1,filter=sitewiselatest
