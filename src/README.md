@@ -99,7 +99,7 @@ Please note that client_id will be saved in config.yml but pass will not be.
 
 		To ignore invalid ssl certificate - 
 
-    		java -jar get_promptcloud_data-<api_version> --user <username> --pass <password> --api_version v1 --ignore_ssl_certificate [--timestamp <timestamp>] [--apiparam <api_param_comma_separated>] 
+    		java -jar get_promptcloud_data-<version_of_jar_file> --user <username> --pass <password> --api_version v1 --ignore_ssl_certificate [--timestamp <timestamp>] [--apiparam <api_param_comma_separated>] 
 
 
 
